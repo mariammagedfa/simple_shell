@@ -1,117 +1,65 @@
+0x16. C - Simple shell
+In this project we'll create a simple UNIX command interpreter in C programming language.
+
 Table of Contents
-Description
-File Structure
-Requirements
-Installation
-Usage
-Example of Use
-Bugs
+Introduction
+What is Shell
+What is it for
+Project Information
+Tasks
+General requirements
+Allowed functions
+Documentation
+Compilation
+Testing
+Files
+Flowchart
+Extra Information
+Resources
 Authors
-License
-Description
-simple_shell is a command line interpreter, or shell, in the tradition of the first Unix shell written by Ken Thompson in 1971. This shell is intentionally minimalistic, yet includes the basic functionality of a traditional Unix-like command line user interface. Standard functions and system calls employed in simple_shell include: access, execve, exit, fork, free, fstat, getline, malloc, perror, signal, stat, wait, write.
+Introduction
+What is Shell
+A shell is a command-line interpreter, it is the computer program that provides a user interface to access the services of the operating system. Depending on the type of interface they use, shells can be of various types, in this case, a shell program of the type sh (Bourne Shell) will be developed. Users typically interact with a shell using a terminal emulator that is used for entering data into and displaying or printing data from, a computer or a computing system.
 
-File Structure
-AUTHORS - List of contributors to this repository
-man_1_simple_shell - Manual page for the simple_shell
-shell.h - program header file
-builtins.c - major builtin functions
-check_for_builtins - checks to see if the user's command matches a builtin
-new_exit - exits the shell with the option of a specified status
-_env - prints the shell's environment variables to the standard output
-new_setenv - initializes a new environment variable, or modifies an existing one
-new_unsetenv - removes an environment variable
-builtins2.c - helper functions for the builtins
-add_key - creates a new environment variable
-find_key - finds an environment variable in the environment array
-add_value - creates a new environment variable string
-_atoi - converts a string into a non-negative integer
-environment.c - functions related to the environment
-make_env - creates the shell's environment from the parent process
-free_env - frees the shell's environment
-errors.c - functions related to printing errors
-print_error - prints an error message to the standard error
-_puts2 - prints a string to the standard error
-_uitoa - converts an unsigned integer to a string
-memory_allocation.c - memory allocation functions
-_realloc - a custom realloc function for arrays of pointers
-new_strtok.c - custom strtok and helper functions
-check_match - checks if a character matches any in a string
-new_strtok - a custom strtok for the shell
-path.c - functions related to executing commands
-path_execute - executes a command in the PATH
-find_path - finds the PATH environment variable
-check_for_path - checks if the command is in the PATH
-execute_cwd - executes a command with an absolute path
-check_for_dir - checks if the command contains an absolute path
-simple_shell.c - essential functions to the shell
-main - the main function of the program
-sig_handler - handles SIGINT
-strfunc.c - functions related to string manipulation
-_puts - writes a string to standart output
-_strdup - duplicates a string
-_strcmpr - compares two strings
-_strcat - concatenates two strings with a / in the middle
-_strlen - calculates the length of a string
-tokenize.c - tokenizing function
-tokenize - creates an array of tokens from a buffer with a specified delimiter
-Requirements
-simple_shell is designed to run in the Ubuntu 14.04 LTS linux environment and to be compiled using the GNU compiler collection v. gcc 4.8.4 with flags-Wall, -Werror, -Wextra, and -pedantic.
+What is it for
+This consists of interpreting orders. It incorporates features such as process control, input/output redirection, law listing and reading, protection, communications, and a command language for writing batch programs or scripts. All Unix-type systems have at least one interpreter compatible with the Bourne shell. The Bourne shell program is found within the Unix file hierarchy at /bin/sh.
 
-Installation
-Clone this repository: git clone "https://github.com/YohannesGetu/simple_shell.git"
-Change directories into the repository: cd simple_shell
-Compile: gcc -Wall -Werror -Wextra -pedantic *.c -o hsh
-Run the shell in interactive mode: ./hsh
-Or run the shell in non-interactive mode: example echo "pwd" | ./hsh
-Usage
-The simple_shell is designed to execute commands in a similar manner to sh, however with more limited functionality. The development of this shell is ongoing. The below features will be checked as they become available (see man page for complete information on usage):
+Project Information
+Tasks
+Task 0. README, man, AUTHORS
+Task 1. Betty would be proud
+Task 2. Simple shell 0.1
+Task 3. Simple shell 0.2
+Task 4. Simple shell 0.3
+Task 5. Simple shell 0.4
+Task 6. Simple shell 1.0
+Task 7. What happens when you type ls -l in the shell
+General requirements
+Allowed editors: vi, vim, emacs
+All your files will be compiled on Ubuntu 14.04 LTS
+Your C programs and functions will be compiled with gcc 4.8.4 using the flags -Wall -Werror -Wextra and -pedantic
+Your code should use the Betty style. It will be checked using betty-style.pl and betty-doc.pl
+No more than 5 functions per file
+All your header files should be include guarded
+This shell should not have any memory leaks
+Unless specified otherwise, your program must have the exact same output as sh (/bin/sh) as well as the exact same error output.
+Allowed functions used
+execve (man 2 execve)
+exit (man 3 exit)
+_exit (man 2 _exit)
+fork (man 2 fork)
+free (man 3 free)
+getline (man 3 getline)
+isatty (man 3 isatty)
+malloc (man 3 malloc)
+perror(man 3 perror)
+signal (man 2 signal)
+stat (__ xstat) (man 2 stat)
+strtok (man 3 strtok)
+wait (man 2 wait)
+write (man 2 write)
+Documentation
+Compilation
+Your shell will be compiled this way:
 
-Features
- uses the PATH
- implements builtins
- handles command line arguments
- custom strtok function
- uses exit status
- shell continues upon Crtl+C (^C)
- handles comments (#)
- handles ;
- custom getline type function
- handles && and ||
- aliases
- variable replacement
-Builtins
- exit
- env
- setenv
- unsetenv
- cd
- help
- history
-Example of Use
-Run the executable in your terminal after compiling:
-
-$ ./hsh
-$ # This is our rendition of the shell
-$ ls -al
-total 100
-drwxrwxr-x  3 vagrant vagrant  4096 Jul 19 22:49 .
-drwxr-xr-x 14 vagrant vagrant  4096 Jul 17 22:37 ..
--rw-rw-r--  1 vagrant vagrant   144 Jul 19 17:16 AUTHORS
--rw-rw-r--  1 vagrant vagrant  2367 Jul 19 22:33 builtins2.c
--rw-rw-r--  1 vagrant vagrant  2764 Jul 19 22:14 builtins.c
--rw-rw-r--  1 vagrant vagrant   710 Jul 16 01:03 environment.c
--rw-rw-r--  1 vagrant vagrant  1217 Jul 16 03:24 errors.c
-drwxrwxr-x  8 vagrant vagrant  4096 Jul 19 22:34 .git
--rwxrwxr-x  1 vagrant vagrant 32287 Jul 19 22:34 hsh
--rw-rw-r--  1 vagrant vagrant  1792 Jul 19 22:12 man_1_simple_shell
--rw-rw-r--  1 vagrant vagrant   484 Jul 15 20:09 memory_allocation.c
--rw-rw-r--  1 vagrant vagrant  1273 Jul 18 21:00 new_strtok.c
--rw-rw-r--  1 vagrant vagrant  3427 Jul 19 22:06 path.c
--rw-rw-r--  1 vagrant vagrant  2347 Jul 19 22:49 README.md
--rw-rw-r--  1 vagrant vagrant  1769 Jul 19 22:04 shell.h
--rw-rw-r--  1 vagrant vagrant  1480 Jul 18 21:15 simple_shell.c
--rw-rw-r--  1 vagrant vagrant  2111 Jul 16 01:10 strfunc.c
--rw-rw-r--  1 vagrant vagrant   719 Jul 19 21:46 tokenize.c
-Bugs
-At this time, there are no known bugs
+gcc -Wall -Werror -Wextra -pedantic *.c -o hsh

@@ -1,130 +1,104 @@
-.TH hsh 1 "MAY 23, 2023" "1.0" "hsh General Commands Manual"
-
+.TH HSH 0.1 "MAY 2023" "ALX" "Simple Shell"
 .SH NAME
-
-.B simple_shell - hsh
-- command line interpreter or shell
-
-
+.B hsh
+- command interpreter (simple shell).
 .SH SYNOPSIS
-
-.B  ./hsh
-.I (no options yet)
-
-
+hsh [filename]
 
 .SH DESCRIPTION
+.B hsh
+is the standard command interpreter for the system. This man page is not intended to be a tutorial or a complete specification of the shell.
 
-simple_shell is a command line interpreter, or shell, in the tradition of the first Unix shell written by Ken Thompson. This shell is intentionally minimalistic, yet includes the basic functionality of a traditional Unix-like command line interface. simple_shell is desgined to run on the linux environment.
+.B Overview
 
+The simple shell is a command that reads lines from either a file or the terminal, interprets them, and generally executes other commands. It is the program that is started when a user logs into the system. It incorporates many features to aid interactive use and has the advantage that the interpretative language is common to both interactive and non-interactive use (shell scripts). That is, commands can be typed directly to the running simple shell or can be put into a file, which can be executed directly by the simple shell.
 
-.SH OVERVIEW
+.B Invocation
 
-Reading from either the terminal or files, simple_shell interprets and executes commands.
+The first non-option argument specified on the command line will be treated as the name of a file from which to read commands (a shell script), and the remaining arguments are set as the positional parameters of the shell ($1, $2, etc.). Otherwise, the shell reads commands from its standard input.
 
+.B Commands
 
-.SH INVOCATION
+The shell interprets the words it reads according to a language, the specification of which is outside the scope of this man page (refer to the BNF in the IEEE Std 1003.2 ("POSIX.2")document). Essentially though, a line is read and if the first word of the line (or after	a control operator) is not a keyword, then the shell has recognized a simple command. Otherwise, a complex command or some other special construct may have been recognized.
 
-Compile simple_shell with the GNU Compiler Collection, preferably using gcc plus the below specified flags, as per this example (note the use of the * wildcard which enables all related .c files to be compiled concurrently):
-.P
-.RS
-.B $ gcc -Wall -Werror -Wextra -pedantic *.c -o hsh
-.P
-.RE
-simple_shell can be run in interactive mode by entering the below command on the command line followd by "enter." Note that the prompt ('$') will appear and you will then be in interactive mode and able to enter commands followed by "enter." 
-.P
-.RS
-.B $ ./hsh
-.P
-.RE
-simple_shell can be run in non-interactive mode through the use of shell scripts. This can involve the use of piping ('|'):
-.P
-.RS
-.B echo 'pwd' | ./hsh
+.B Search and Execution
 
-.SH EXECUTABLES
+There are three types of commands: simple shell functions, built-in commands, and normal programs. The command is searched for (by name) in that order. The three types of commands are all executed in a different way.
 
-Example of executables:
-.IP
-.br
-.\&
-.RS
-\&$ echo "Example of executables"
-.br
-\&"Example of executables"
-.br
-\&$
+When a shell function is executed, all of the shell positional parameters (except $0, which remains unchanged) are set to the arguments of the shell function. The variables which are explicitly placed in the environment of the command (by placing assignments to them before the function name) are made local to the function and are set to the values given. Then the command given in the function definition is executed. The positional parameters are restored to their original values when the command completes. This all occurs within the current simple shell.
 
+Shell built-in commands are executed internally to the simple shell, without spawning a new process. There are two kinds of built-in commands: regular and special. Assignments before special builtins persist after they finish executing and assignment errors, redirection errors and certain operand errors cause a script to be aborted. Special builtins cannot be overridden with a function. Both regular and special builtins can affect the shell in ways normal programs cannot.
 
-.SH BUILTINS
+Otherwise, if the command name does not match a function or built-in command, the command is searched for as a normal program in the file system (as described in the next section). When a normal program is executed, the shell runs the program, passing the arguments and the environment to the program. If the program is not a normal executable file (i.e., if it does not begin with the "magic number" whose ASCII representation is "#!", resulting in an ENOEXEC return value from execve(2)) but appears to be a text file, the shell will run a new instance of
+.B sh
+to interpret it.
 
-The following builtin commands are supported:
+.B Path Search
 
-.IT
-.B env
-- prints the environment variables
+When locating a command, the shell first looks to see if it has a shell function by that name. Then it looks for a builtin command by that name. If a built-in command is not found, one of two things happen:
 
+1. Command names containing a slash are simply executed without performing any searches.
+
+2. The shell searches each entry in the PATH variable in turn for the command. The value of the PATH variable should be a series of entries separated by colons. Each entry consists of a directory name. The current directory may be indicated implicitly by an empty directory name, or explicitly by a single period.
+
+.B Command Exit Status
+
+Each command has an exit status that can influence the behavior of other shell commands. The paradigm is that a command exits with zero for normal or success, and non-zero for failure, error, or a false indication. The man page for each command should indicate the various exit codes and what they mean. Additionally, the built-in commands return exit codes, as does an executed shell function.
+
+If a command is terminated by a signal, its exit status is greater than 128. The signal name can be found by passing the exit status to kill -l.
+
+If there is no command word, the exit status is the exit status of the last command substitution executed, or zero if the command does not contain any command substitutions.
+
+.SH ENVIRONMENT
+Environment variables affect the execution of
+.B sh
+:
+
+     ENV	Initialization file for interactive shells.
+
+.SH EXIT STATUS
+Errors that are detected by the shell, such as a syntax error, will cause the shell to exit with a non-zero exit status. If the shell is not an interactive shell, the execution of the shell file will be aborted. Otherwise the shell will return the exit status of the last command executed, or if the
 .B exit
-- exits the program
+builtin is used with a numeric argument, it will return the argument.
 
-.B setenv
-- sets the environment
+.SH EXAMPLES
+Below an example of interactive mode:
 
-.B unsetenv
-- removes elements from the environment
+.RS +4
+$ ./hsh
+.RE
+.RS +4
+($) /bin/ls
+.RE
+.RS +4
+hsh main.c shell.c
+.RE
+.RS +4
+($)
+.RE
+.RS +4
+($) exit
+.RE
+.RS +4
+$
 
-Example of builtin command:
-.IP
-.br
-.\&
-.RS
-\&$ env
-.br
-\&TERM=xterm-256color
-.br
-\&SHELL=/bin/bash
-.br
-\&SSH_CLIENT=10.0.2.2 50046 22
-.br
-\&OLDPWD=/home/vagrant
-.br
-\&SSH_TTY=/dev/pts/0
-.br
-\&LC_ALL=en_US
-.br
-\&USER=vagrant
-.br
-\&MAIL=/var/mail/vagrant
-.br
-\&PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-.br
-\&PWD=/home/vagrant/simple_shell
-.br
-\&LANG=en_US.UTF-8
-.br
-\&SHLVL=1
-.br
-\&HOME=/home/vagrant
-.br
-\&LOGNAME=vagrant
-.br
-\&SSH_CONNECTION=10.0.2.2 50046 10.0.2.15 22
-.br
-\&LESSOPEN=| /usr/bin/lesspipe %s
-.br
-\&LESSCLOSE=/usr/bin/lesspipe %s %s
-br.
-\&_=./hsh
-.br
-\&$
+.SH HISTORY
+.B hsh
+is a POSIX-compliant implementation of /bin/sh that aims to be as small as possible.
+.B hsh
+is a descendant of the first
+.B sh
+version of Unix that appeared in Version 1 AT&T UNIX in 1971, written by Ken Thompson in AT&T Bell Laboratories. That version of
+.B sh
+was rewritten in 1989 under the BSD license after the Bourne shell from AT&T System V Release 4 UNIX, which inherited the name
+.B sh.
+It was a simple command interpreter, not designed for scripting, but nonetheless introduced several innovative features to the command-line interface and led to the development of the later Unix shells.
 
 .SH BUGS
-No known bugs at this writing (August 31, 2021).
-Please report any issues to the authors.
+No known bugs until now.
 
-.SH AUTHOR
+.SH CREDITS 
+This man page is created for academic purpose, to make our Simple Shell project by Jocelyn Vega and Ricardo Arquímedes Castro, Holberton School Students.
 
+.SH AUTHORS
 Mariam Maged
-
-.SH SEE ALSO
-sh
