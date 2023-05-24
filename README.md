@@ -1,48 +1,62 @@
-Project:0x16.C-Simple Shell
-Introduction:
-In this project is developed a simple UNIX command interpreter (shell) as a part of low-level programming foundation and algorithm--Linux and Unix system programming.
+simple_shell project repository
+This repository contains the files for ALX's simple_shell. It can be compiled using GCC and will execute a simple shell that can be used for some basic tasks and programs most commonly found in the /bin/ folder.
 
-Description:
-A simple UNIX command interpreter is a program that reads commands from the standard input or files and executes them in order to display a result.
-
-Requirements:
-General:
-Allowed editors: vi, vim, emacs
-All your files will be compiled on Ubuntu 14.04 LTS
-Your C programs and functions will be compiled with gcc 4.8.4 using the flags -Wall -Werror -Wextra and -pedantic
-All your files should end with a new line
-A README.md file, at the root of the folder of the project is mandatory
-Your code should use the Betty style. It will be checked using betty-style.pl and betty-doc.pl
-Your shell should not have any memory leaks
-No more than 5 functions per file
-All your header files should be include guarded
-Use system calls only when you need to (why?)
-Flowchart:
-This is the Flowchart that describes the process of the simple shell.
-
-Installation:
-To use this shell first of all you must clone this repository, using the next c ommand:
-
-git clone https://github.com/poix-code/simple_shell.git
-
-How to compile it:
-After downloaded you must enter the directory and execute the next command:
-
+Pre-requisites
+Authorized functions and macros:
+access (man 2 access)
+chdir (man 2 chdir)
+close (man 2 close)
+closedir (man 3 closedir)
+execve (man 2 execve)
+exit (man 3 exit)
+_exit (man 2 _exit)
+fflush (man 3 fflush)
+fork (man 2 fork)
+free (man 3 free)
+getcwd (man 3 getcwd)
+getline (man 3 getline)
+isatty (man 3 isatty)
+kill (man 2 kill)
+malloc (man 3 malloc)
+open (man 2 open)
+opendir (man 3 opendir)
+perror (man 3 perror)
+read (man 2 read)
+readdir (man 3 readdir)
+signal (man 2 signal)
+stat (__xstat) (man 2 stat)
+lstat (__lxstat) (man 2 lstat)
+fstat (__fxstat) (man 2 fstat)
+strtok (man 3 strtok)
+wait (man 2 wait)
+waitpid (man 2 waitpid)
+wait3 (man 2 wait3)
+wait4 (man 2 wait4)
+write (man 2 write)
+GCC command to compile:
 gcc -Wall -Werror -Wextra -pedantic *.c -o hsh
 
-How to use it:
-To initializate the Shell process you need to run: ./hsh
+This wil compile all the '.c' files and change the output's name to 'hsh'.
 
-And now you can type and execute commands writing its relative path, see below:
+Template to test output:
+============= $ ./hsh
 
-$ ./hsh
-($) /bin/ls
-AUTHORS  functions.h  hsh  hsh.c  man_1_simple_shell  ops_linked_list.c  ops_strings.c  README.md  tools.c
 ($)
-($) exit
-$
-Or writing the reserved word of the command, like this:
 
-($) ls
-AUTHORS  functions.h  hsh  hsh.c  man_1_simple_shell  ops_linked_list.c  ops_strings.c  README.md  tools.c
-($)
+hsh main.c shell.c
+
+$ exit $
+
+After you clone this repository and compile the program with the command above, you will generate a file called hsh that can be executed by entering ./hsh in your shell.
+
+The output after the program is executed should look something like this:
+
+$|
+Where you will get a prompt in the shape of a dollar sign so you can start typing commands into your shell. Agood example of how it should execute is the command shown above were the user enters 'ls' and then gets a list of the directory contents.
+
+Function Prototypes:
+Brief description of functions contained in project:
+
+_strcmpdir : compares strings to find dir. find_command : finds command to execute in path routes. charput : writes the character like putchar. place : similar to puts in C. _strlen : string length. str_concat : concatenate strings. lookforslash : identify if first char is a '/'. compareExit : checks if user typed exit. compareEnv : checks if user typed env. execute_proc : receives command and args from getline to be executed. identify_string : returns pointer with folder address. prompt : infinite loop with fork to keep prompt going. controlC: avoid program closing when pressing ctrl + c. main: initialize program.
+
+README.md: this.
