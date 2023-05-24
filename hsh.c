@@ -1,4 +1,4 @@
-#include "main.h"
+#include "functions.h"
 /**
  * main - Entry point. Runs a basic command line interpreter.
  *

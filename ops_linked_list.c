@@ -1,4 +1,4 @@
-#include "main.h"
+#include "functions.h"
 /**
  * add_node_at_end - add a new node to linked list.
  * @head: head of the linked list.

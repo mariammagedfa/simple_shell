@@ -1,4 +1,4 @@
-#include "main.h"
+#include "functions.h"
 
 /**
  * dir_path - concatenate 'cmd' with all of directories in the enviroment
