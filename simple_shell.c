@@ -1,49 +1,68 @@
 #include "shell.h"
-/**
- * main - main arguments functions
- * @ac:count of argumnents
- * @av: arguments
- * @env: environment
- * Return: _exit = 0.
- */
-int main(int ac, char **av, char **env)
-{
-	char *getcommand = NULL, **user_command = NULL;
-	int pathValue = 0, _exit = 0, n = 0;
-	(void)ac;
 
-	while (1)
+/* global variable for ^C handling */
+unsigned int sig_flag;
+
+/**
+ * sig_handler - handles ^C signal interupt
+ * @uuv: unused variable (required for signal function prototype)
+ *
+ * Return: void
+ */
+static void sig_handler(int uuv)
+{
+	(void) uuv;
+	if (sig_flag == 0)
+		_puts("\n$ ");
+	else
+		_puts("\n");
+}
+
+/**
+ * main - main function for the shell
+ * @argc: number of arguments passed to main
+ * @argv: array of arguments passed to main
+ * @environment: array of environment variables
+ *
+ * Return: 0 or exit status, or ?
+ */
+int main(int argc __attribute__((unused)), char **argv, char **environment)
+{
+	size_t len_buffer = 0;
+	unsigned int is_pipe = 0, i;
+	vars_t vars = {NULL, NULL, NULL, 0, NULL, 0, NULL};
+
+	vars.argv = argv;
+	vars.env = make_env(environment);
+	signal(SIGINT, sig_handler);
+	if (!isatty(STDIN_FILENO))
+		is_pipe = 1;
+	if (is_pipe == 0)
+		_puts("$ ");
+	sig_flag = 0;
+	while (getline(&(vars.buffer), &len_buffer, stdin) != -1)
 	{
-		getcommand = _getline_command();
-		if (getcommand)
+		sig_flag = 1;
+		vars.count++;
+		vars.commands = tokenize(vars.buffer, ";");
+		for (i = 0; vars.commands && vars.commands[i] != NULL; i++)
 		{
-			pathValue++;
-			user_command = _get_token(getcommand);
-			if (!user_command)
-			{
-				free(getcommand);
-				continue;
-			}
-			if ((!_strcmp(user_command[0], "exit")) && user_command[1] == NULL)
-				_exit_command(user_command, getcommand, _exit);
-			if (!_strcmp(user_command[0], "env"))
-				_getenv(env);
-			else
-			{
-				n = _values_path(&user_command[0], env);
-				_exit = _fork_fun(user_command, av, env, getcommand, pathValue, n);
-				if (n == 0)
-					free(user_command[0]);
-			}
-			free(user_command);
+			vars.av = tokenize(vars.commands[i], "\n \t\r");
+			if (vars.av && vars.av[0])
+				if (check_for_builtins(&vars) == NULL)
+					check_for_path(&vars);
+			free(vars.av);
 		}
-		else
-		{
-			if (isatty(STDIN_FILENO))
-				write(STDOUT_FILENO, "\n", 1);
-			exit(_exit);
-		}
-		free(getcommand);
+		free(vars.buffer);
+		free(vars.commands);
+		sig_flag = 0;
+		if (is_pipe == 0)
+			_puts("$ ");
+		vars.buffer = NULL;
 	}
-	return (_exit);
+	if (is_pipe == 0)
+		_puts("\n");
+	free_env(vars.env);
+	free(vars.buffer);
+	exit(vars.status);
 }
